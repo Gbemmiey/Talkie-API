@@ -29,6 +29,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="DTOs\Account\" />
+    <Folder Include="DTOs\Contact\" />
+    <Folder Include="DTOs\Message\" />
     <Folder Include="Services\" />
   </ItemGroup>
 
