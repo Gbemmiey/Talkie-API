@@ -1,10 +1,12 @@
 ﻿namespace Talkie.Models
 {
-    public class Text
+    public class SharedFile
     {
         public int Id { get; set; }
+
         public int MessageId { get; set; }
-        public string Content { get; set; } = string.Empty;
+        public string FileUrl { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
 
         public Message? Message { get; set; }
     }
