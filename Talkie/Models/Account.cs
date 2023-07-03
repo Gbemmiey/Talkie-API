@@ -21,7 +21,7 @@ namespace Talkie.Models
         [Column(TypeName = "decimal(18, 4)")]
         public decimal Balance { get; set; }
 
-        public int AuthPin { get; set; }
+        public byte[] TransactPin { get; set; }
 
         public List<Message>? Messages { get; set; }
         public List<Contact>? Contacts { get; set; }

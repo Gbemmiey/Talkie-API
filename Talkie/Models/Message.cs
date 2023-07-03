@@ -10,6 +10,7 @@ namespace Talkie.Models
 
         public DateTime Modified { get; set; }
         public MessageType Type { get; set; }
+        public MessageStatus Status { get; set; }
 
         [ForeignKey("User")]
         public string UserNumber { get; set; }
@@ -17,7 +18,9 @@ namespace Talkie.Models
         [ForeignKey("Friend")]
         public string RecipientNumber { get; set; }
 
-        public ICollection<Transaction>? Transactions { get; set; }
+        public ICollection<Transaction>? Transactions
+        { get; set; }
+
         public ICollection<Text>? Texts { get; set; }
         public ICollection<SharedFile>? SharedFiles { get; set; }
 
