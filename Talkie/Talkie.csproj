@@ -29,10 +29,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\Account\" />
-    <Folder Include="Services\Contact\" />
-    <Folder Include="Services\Message\" />
-    <Folder Include="Services\Auth\" />
+    <Folder Include="Services\ContactService\" />
+    <Folder Include="Services\MessageService\" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1production_1json__JsonSchema="https://json.schemastore.org/appsettings.json" /></VisualStudio></ProjectExtensions>

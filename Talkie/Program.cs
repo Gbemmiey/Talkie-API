@@ -1,14 +1,15 @@
 global using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Filters;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Talkie.Data;
+using Talkie.Services.AccountService;
+using Talkie.Services.Auth;
+using Talkie.Services.AuthenticationService;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 builder.Services.AddDbContext<DataContext>(options =>
 {
@@ -18,6 +19,11 @@ builder.Services.AddDbContext<DataContext>(options =>
 );
 
 builder.Services.AddControllers();
+
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
+builder.Services.TryAddScoped<IAccountService, AccountService>();
+builder.Services.TryAddScoped<IAuthRepository, AuthRepository>();
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -92,11 +98,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAuthentication();
-
 app.UseAuthorization();
-
 app.UseHttpsRedirection();
-
 app.MapControllers();
 
 app.Run();

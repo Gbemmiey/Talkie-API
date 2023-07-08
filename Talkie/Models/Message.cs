@@ -1,5 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Talkie.Models
 {
@@ -10,20 +14,18 @@ namespace Talkie.Models
 
         public DateTime Modified { get; set; }
         public MessageType Type { get; set; }
-        public MessageStatus Status { get; set; }
 
         [ForeignKey("User")]
-        public string UserNumber { get; set; }
+        public long Number { get; set; }
 
         [ForeignKey("Friend")]
-        public string RecipientNumber { get; set; }
+        public long RecipientNumber { get; set; }
 
-        public ICollection<Transaction>? Transactions
-        { get; set; }
-
+        public ICollection<Transaction>? Transactions { get; set; }
         public ICollection<Text>? Texts { get; set; }
         public ICollection<SharedFile>? SharedFiles { get; set; }
 
         public Account? User { get; set; }
+        //        public Account? Friend { get; set; }
     }
 }

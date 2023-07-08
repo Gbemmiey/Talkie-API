@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Talkie.DTOs.Account;
 
 namespace Talkie.Controllers
 {
@@ -8,36 +8,44 @@ namespace Talkie.Controllers
     [ApiController]
     public class AccountsController : ControllerBase
     {
-        // GET: api/<AccountsController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IAccountService _accountService;
+
+        public AccountsController(IAccountService accountService)
         {
-            return new string[] { "value1", "value2" };
+            _accountService = accountService;
         }
 
-        // GET api/<AccountsController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("All")]
+        public async Task<ActionResult<ServiceResponse<List<GetAccountDto>>>> GetAllAccounts()
         {
-            return "value";
+            return Ok(await _accountService.GetAllAccounts());
         }
 
-        // POST api/<AccountsController>
+        [Authorize]
+        [HttpGet("{AccountNumber}")]
+        public async Task<ActionResult<ServiceResponse<List<GetAccountDto>>>> GetAnAccount(string AccountNumber)
+        {
+            return Ok(await _accountService.GetAccount(AccountNumber));
+        }
+
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult<ServiceResponse<GetAccountDto>>> AddAccount(AddAccountDto newAccount)
         {
+            return Ok(await _accountService.CreateAccount(newAccount));
         }
 
-        // PUT api/<AccountsController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [Authorize]
+        [HttpPut]
+        public async Task<ActionResult<ServiceResponse<GetAccountDto>>> ModifyAccount(UpdateAccountDto updateAccount)
         {
+            return Ok(await _accountService.ModifyAccount(updateAccount));
         }
 
-        // DELETE api/<AccountsController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [Authorize]
+        [HttpGet]
+        public async Task<ActionResult<ServiceResponse<GetProfileDto>>> GetProfile()
         {
+            return Ok(await _accountService.GetProfile());
         }
     }
 }
