@@ -16,16 +16,15 @@ namespace Talkie.Models
         public MessageType Type { get; set; }
 
         [ForeignKey("User")]
-        public long Number { get; set; }
+        public string Number { get; set; } = string.Empty;
 
         [ForeignKey("Friend")]
-        public long RecipientNumber { get; set; }
+        public string RecipientNumber { get; set; } = string.Empty;
 
         public ICollection<Transaction>? Transactions { get; set; }
         public ICollection<Text>? Texts { get; set; }
         public ICollection<SharedFile>? SharedFiles { get; set; }
 
         public Account? User { get; set; }
-        //        public Account? Friend { get; set; }
     }
 }

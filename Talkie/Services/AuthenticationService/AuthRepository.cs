@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -60,10 +61,14 @@ namespace Talkie.Services.AuthenticationService
 
             CreatePasswordHash(NewAccount.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
+            CreatePinHash(NewAccount.AuthPin, out byte[] pinHash, out byte[] pinSalt);
+
             Account user = new Account
             {
                 PasswordHash = passwordHash,
-                PasswordSalt = passwordSalt
+                PasswordSalt = passwordSalt,
+                PinHash = pinHash,
+                PinSalt = pinSalt
             };
 
             _mapper.Map(NewAccount, user);
@@ -71,6 +76,15 @@ namespace Talkie.Services.AuthenticationService
             await _context.SaveChangesAsync();
             response.Data = user.Number;
             return response;
+        }
+
+        private void CreatePinHash(int authPin, out byte[] pinHash, out byte[] pinSalt)
+        {
+            using (var hmac = new System.Security.Cryptography.HMACSHA512())
+            {
+                pinSalt = hmac.Key;
+                pinHash = hmac.ComputeHash(BitConverter.GetBytes(authPin));
+            }
         }
 
         public async Task<bool> UserExists(string EmailAddress)

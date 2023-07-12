@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Talkie.Data;
 
@@ -11,9 +12,11 @@ using Talkie.Data;
 namespace Talkie.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230708202521_NewUpdate")]
+    partial class NewUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,6 +29,10 @@ namespace Talkie.Migrations
                 {
                     b.Property<string>("Number")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<byte[]>("AuthPin")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<decimal>("Balance")
                         .HasColumnType("decimal(18, 4)");
@@ -47,14 +54,6 @@ namespace Talkie.Migrations
                         .HasColumnType("varbinary(max)");
 
                     b.Property<byte[]>("PasswordSalt")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<byte[]>("PinHash")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<byte[]>("PinSalt")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 

@@ -74,15 +74,11 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-app.UseSwagger();
-app.UseSwaggerUI();
-
 if (app.Environment.IsProduction())
 {
     app.UseHsts();
-
     app.UseSwaggerUI();
+    app.UseSwagger();
     app.UseCors(option =>
     {
         option
@@ -95,11 +91,13 @@ if (app.Environment.IsProduction())
 if (app.Environment.IsDevelopment())
 {
     app.UseSwaggerUI();
+    app.UseSwagger();
 }
 
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseHttpsRedirection();
+
 app.MapControllers();
 
 app.Run();
