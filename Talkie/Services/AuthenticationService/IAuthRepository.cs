@@ -10,5 +10,7 @@ namespace Talkie.Services.Auth
         Task<ServiceResponse<string>> Login(string Account, string password);
 
         Task<bool> UserExists(string username);
+
+        bool VerifyPinHash(int pin, byte[] pinHash, byte[] pinSalt);
     }
 }

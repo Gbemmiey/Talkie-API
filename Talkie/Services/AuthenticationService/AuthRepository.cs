@@ -115,6 +115,16 @@ namespace Talkie.Services.AuthenticationService
             }
         }
 
+        public bool VerifyPinHash(int pin, byte[] pinHash, byte[] pinSalt)
+        {
+            // Creating new instance of hmac class
+            using (var hmac = new System.Security.Cryptography.HMACSHA512(pinSalt))
+            {
+                var computeHash = hmac.ComputeHash(BitConverter.GetBytes(pin));
+                return computeHash.SequenceEqual(pinHash);
+            }
+        }
+
         private string CreateToken(Account user)
         {
             List<Claim> claims = new List<Claim>
