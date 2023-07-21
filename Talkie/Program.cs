@@ -8,6 +8,10 @@ using Talkie.Data;
 using Talkie.Services.AccountService;
 using Talkie.Services.Auth;
 using Talkie.Services.AuthenticationService;
+using Talkie.Services.ContactService;
+using Talkie.Services.GenericServices;
+using Talkie.Services.MessageService;
+using Talkie.Services.TransactionService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +28,10 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.TryAddScoped<IAccountService, AccountService>();
 builder.Services.TryAddScoped<IAuthRepository, AuthRepository>();
+builder.Services.TryAddScoped<IMessageService, MessageService>();
+builder.Services.TryAddScoped<IContactService, ContactService>();
+builder.Services.TryAddScoped<IGenericService, GenericService>();
+builder.Services.TryAddScoped<ITransactionService, TransactionService>();
 
 builder.Services.AddEndpointsApiExplorer();
 

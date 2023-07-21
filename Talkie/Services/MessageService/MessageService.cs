@@ -57,7 +57,8 @@ namespace Talkie.Services.MessageService
                     Modified = wcaTime,
                     RecipientNumber = newMessage.RecipientNumber,
                     Type = newMessage.Type,
-                    Number = _genericService.GetUserID()
+                    Number = _genericService.GetUserID(),
+                    DeliveryStatus = DeliveryStatus.Sent
                 };
 
                 Text nT = new Text
@@ -99,7 +100,8 @@ namespace Talkie.Services.MessageService
                         Modified = wcaTime,
                         RecipientNumber = newMessage.RecipientNumber,
                         Type = newMessage.Type,
-                        Number = _genericService.GetUserID()
+                        Number = _genericService.GetUserID(),
+                        DeliveryStatus = DeliveryStatus.Sent
                     };
 
                     Transaction nT = new Transaction
