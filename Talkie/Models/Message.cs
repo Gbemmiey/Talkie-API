@@ -21,6 +21,8 @@ namespace Talkie.Models
         [ForeignKey("Friend")]
         public string RecipientNumber { get; set; } = string.Empty;
 
+        public DeliveryStatus DeliveryStatus { get; set; }
+
         public ICollection<Transaction>? Transactions { get; set; }
         public ICollection<Text>? Texts { get; set; }
         public ICollection<SharedFile>? SharedFiles { get; set; }

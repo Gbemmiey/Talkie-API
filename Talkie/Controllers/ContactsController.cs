@@ -1,43 +1,40 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Talkie.DTOs.Contact;
+using Talkie.Services.ContactService;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Talkie.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ContactsController : ControllerBase
     {
-        // GET: api/<ContactsController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IContactService _contactService;
+
+        public ContactsController(IContactService contactService)
         {
-            return new string[] { "value1", "value2" };
+            _contactService = contactService;
         }
 
-        // GET api/<ContactsController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("All")]
+        public async Task<ActionResult<ServiceResponse<List<GetContactDto>>>> GetAllContacts()
         {
-            return "value";
+            return Ok(await _contactService.GetAllContacts());
         }
 
-        // POST api/<ContactsController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult<ServiceResponse<List<GetContactDto>>>> AddContact(string accountNumber)
         {
+            return Ok(await _contactService.AddContact(accountNumber));
         }
 
-        // PUT api/<ContactsController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpDelete]
+        public async Task<ActionResult<ServiceResponse<List<GetContactDto>>>> DeleteContact(string accountNumber)
         {
-        }
-
-        // DELETE api/<ContactsController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            return Ok(await _contactService.DeleteContact(accountNumber));
         }
     }
 }
