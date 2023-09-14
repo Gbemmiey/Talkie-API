@@ -17,7 +17,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<DataContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("AzureConnection"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("AzureConnection"),
+    o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
 }
 
 );
@@ -26,12 +27,15 @@ builder.Services.AddControllers();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
-builder.Services.TryAddScoped<IAccountService, AccountService>();
-builder.Services.TryAddScoped<IAuthRepository, AuthRepository>();
-builder.Services.TryAddScoped<IMessageService, MessageService>();
-builder.Services.TryAddScoped<IContactService, ContactService>();
-builder.Services.TryAddScoped<IGenericService, GenericService>();
-builder.Services.TryAddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<IGenericService, GenericService>();
+
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+
+builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddScoped<IContactService, ContactService>();
+
+builder.Services.AddScoped<ITransactionService, TransactionService>();
 
 builder.Services.AddEndpointsApiExplorer();
 

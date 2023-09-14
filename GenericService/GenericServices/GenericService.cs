@@ -1,24 +1,25 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
-using Talkie.Data;
 
-namespace Talkie.Services.GenericServices
+namespace GenericService
 {
     public class GenericService : IGenericService
     {
         private readonly DataContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IGenericService _genericService;
 
-        public GenericService(DataContext context, IHttpContextAccessor httpContextAccessor)
+        public GenericService(DataContext context, IHttpContextAccessor httpContextAccessor, IGenericService genericService)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
+            _genericService = genericService;
         }
 
         public async Task<decimal> GetUserBalance()
         {
             decimal balance;
-            var account = await _context.Accounts.FirstAsync(c => c.Number == GetUserID());
+            var account = await _context.Accounts.FirstAsync(c => c.Number == _genericService.GetUserID());
             balance = account.Balance;
 
             return balance;

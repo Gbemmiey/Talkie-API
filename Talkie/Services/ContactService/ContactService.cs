@@ -13,14 +13,12 @@ namespace Talkie.Services.ContactService
     {
         private readonly IMapper _mapper;
         private readonly DataContext _context;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         public readonly IGenericService _genericService;
 
-        public ContactService(IMapper mapper, DataContext context, IHttpContextAccessor httpContextAccessor, IGenericService genericService)
+        public ContactService(IMapper mapper, DataContext context, IGenericService genericService)
         {
             _mapper = mapper;
             _context = context;
-            _httpContextAccessor = httpContextAccessor;
             _genericService = genericService;
         }
 
@@ -59,22 +57,35 @@ namespace Talkie.Services.ContactService
 
         public async Task<ServiceResponse<List<GetContactDto>>> DeleteContact(string accountNumber)
         {
-            try
+            if (await UserExists(accountNumber))
             {
-                Contact deletedContact = await _context.Contacts
-                                                .Where(c => c.UserNumber == _genericService.GetUserID() && c.BeneficiaryNumber == accountNumber)
-                                                .FirstOrDefaultAsync();
+                try
+                {
+                    Contact deletedContact = await _context.Contacts
+                                                    .Where(c => c.UserNumber == _genericService.GetUserID() && c.BeneficiaryNumber == accountNumber)
+                                                    .FirstOrDefaultAsync();
 
-                _context.Contacts.Remove(deletedContact);
+                    _context.Contacts.Remove(deletedContact);
 
-                await _context.SaveChangesAsync();
-                return await GetAllContacts();
+                    await _context.SaveChangesAsync();
+                    var res = await GetAllContacts();
+                    res.Success = true;
+                    res.Message = "Contact has been sucessfully added";
+                    return res;
+                }
+                catch (Exception ex)
+                {
+                    var res = await GetAllContacts();
+                    res.Success = false;
+                    res.Message = ex.Message;
+                    return res;
+                }
             }
-            catch (Exception ex)
+            else
             {
                 var res = await GetAllContacts();
                 res.Success = false;
-                res.Message = ex.Message;
+                res.Message = "User does not exist";
                 return res;
             }
         }

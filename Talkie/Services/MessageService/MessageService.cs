@@ -18,21 +18,19 @@ namespace Talkie.Services.MessageService
     {
         private readonly IMapper _mapper;
         private readonly DataContext _context;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ITransactionService _transact;
         private readonly IGenericService _genericService;
         private readonly IAuthRepository _authRepository;
 
         private decimal value;
 
-        public MessageService(IMapper mapper, DataContext context,
-            IHttpContextAccessor httpContextAccessor, ITransactionService transact,
+        public MessageService(IMapper mapper, DataContext context
+, ITransactionService transact,
             IGenericService genericService, IAuthRepository authRepository)
         {
             _mapper = mapper;
             _transact = transact;
             _context = context;
-            _httpContextAccessor = httpContextAccessor;
             _genericService = genericService;
             _authRepository = authRepository;
         }
@@ -69,6 +67,7 @@ namespace Talkie.Services.MessageService
                 nT.Message = newMess;
 
                 _context.Texts.Add(nT);
+                System.Diagnostics.Debug.WriteLine(newMess);
 
                 await _context.SaveChangesAsync();
 

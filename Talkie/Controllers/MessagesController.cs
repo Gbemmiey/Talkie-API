@@ -18,19 +18,13 @@ namespace Talkie.Controllers
             _messageService = messageService;
         }
 
-        [HttpGet("/all")]
-        public async Task<ActionResult<ServiceResponse<List<GetAccountDto>>>> GetMessageHistory()
-        {
-            return Ok(await _messageService.GetContactsHistory());
-        }
-
         [HttpGet]
-        public async Task<ActionResult<ServiceResponse<List<long>>>> GetContactsHistory()
+        public async Task<ActionResult<ServiceResponse<List<string>>>> GetContactsHistory()
         {
             return Ok(await _messageService.GetMessageHistory());
         }
 
-        [HttpGet("/transactions")]
+        [HttpGet("transactions")]
         public async Task<ActionResult<ServiceResponse<List<GetStatementDto>>>> GetAllTransactions()
         {
             return Ok(await _messageService.GetAllTransactions());
@@ -66,6 +60,12 @@ namespace Talkie.Controllers
         public async Task<ActionResult<ServiceResponse<List<GetMessageDto>>>> GetTransactions(string contact)
         {
             return Ok(await _messageService.GetTransactions(contact));
+        }
+
+        [HttpGet("all")]
+        public async Task<ActionResult<ServiceResponse<List<GetAccountDto>>>> GetMessageHistory()
+        {
+            return Ok(await _messageService.GetContactsHistory());
         }
     }
 }
