@@ -28,5 +28,14 @@ namespace Talkie.Services.GenericServices
         {
             return _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         }
+
+        public DateTime getLocalTime()
+        {
+            DateTime utcTime = DateTime.UtcNow;
+            TimeZoneInfo wcaZone = TimeZoneInfo.FindSystemTimeZoneById("W. Central Africa Standard Time");
+            // Convert the UTC time to West Central Africa time
+            DateTime wcaTime = TimeZoneInfo.ConvertTimeFromUtc(utcTime, wcaZone);
+            return wcaTime;
+        }
     }
 }

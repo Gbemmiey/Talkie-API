@@ -2,6 +2,8 @@
 {
     public interface IGenericService
     {
+        DateTime getLocalTime();
+
         Task<decimal> GetUserBalance();
 
         string GetUserID();

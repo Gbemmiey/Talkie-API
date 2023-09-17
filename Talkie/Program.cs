@@ -11,6 +11,7 @@ using Talkie.Services.AuthenticationService;
 using Talkie.Services.ContactService;
 using Talkie.Services.GenericServices;
 using Talkie.Services.MessageService;
+using Talkie.Services.TextService;
 using Talkie.Services.TransactionService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,6 +37,7 @@ builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IContactService, ContactService>();
 
 builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<ITextService, TextService>();
 
 builder.Services.AddEndpointsApiExplorer();
 

@@ -9,6 +9,7 @@ using Talkie.DTOs.Message;
 using Talkie.Models;
 using Talkie.Services.Auth;
 using Talkie.Services.GenericServices;
+using Talkie.Services.TextService;
 using Talkie.Services.TransactionService;
 using Transaction = Talkie.Models.Transaction;
 
@@ -21,16 +22,16 @@ namespace Talkie.Services.MessageService
         private readonly ITransactionService _transact;
         private readonly IGenericService _genericService;
         private readonly IAuthRepository _authRepository;
-
-        private decimal value;
+        private readonly ITextService _textService;
 
         public MessageService(IMapper mapper, DataContext context
-, ITransactionService transact,
+, ITransactionService transact, ITextService textService,
             IGenericService genericService, IAuthRepository authRepository)
         {
             _mapper = mapper;
             _transact = transact;
             _context = context;
+            _textService = textService;
             _genericService = genericService;
             _authRepository = authRepository;
         }
@@ -39,100 +40,17 @@ namespace Talkie.Services.MessageService
         {
             var serviceResponse = new ServiceResponse<GetMessageDto>();
 
-            DateTime utcTime = DateTime.UtcNow;
-            TimeZoneInfo wcaZone = TimeZoneInfo.FindSystemTimeZoneById("W. Central Africa Standard Time");
-            // Convert the UTC time to West Central Africa time
-            DateTime wcaTime = TimeZoneInfo.ConvertTimeFromUtc(utcTime, wcaZone);
-
-            var jsonString = JsonConvert.SerializeObject(newMessage.Payload);
-
             if (newMessage.Type == MessageType.Text)
             {
-                Text newText = _mapper.Map<Text>(jsonString);
-
-                Message newMess = new Message
-                {
-                    Modified = wcaTime,
-                    RecipientNumber = newMessage.RecipientNumber,
-                    Type = newMessage.Type,
-                    Number = _genericService.GetUserID(),
-                    DeliveryStatus = DeliveryStatus.Sent
-                };
-
-                Text nT = new Text
-                {
-                    Content = newMessage.Payload
-                };
-
-                nT.Message = newMess;
-
-                _context.Texts.Add(nT);
-                System.Diagnostics.Debug.WriteLine(newMess);
-
-                await _context.SaveChangesAsync();
-
-                Message? saveMessage = await _context.Messages
-                                            .Include(c => c.Texts)
-                                            .FirstOrDefaultAsync(c => c.Id == nT.MessageId);
-
-                Text? savedText = await _context.Texts
-                                                .FirstOrDefaultAsync(c => c.MessageId == nT.MessageId);
-
-                GetMessageDto responseData = _mapper.Map<GetMessageDto>(saveMessage);
-
-                responseData.Payload = savedText.Content;
-                responseData.Interaction = "Sent";
-
-                serviceResponse.Data = _mapper.Map<GetMessageDto>(responseData);
-                return serviceResponse;
+                serviceResponse = await _textService.SaveText(newMessage);
             }
             else if (newMessage.Type == MessageType.Transaction)
             {
-                Account? act = await _context.Accounts.Where(c => c.Number == _genericService.GetUserID()).FirstOrDefaultAsync();
-
-                if (_authRepository.VerifyPinHash(newMessage.AuthPin, act.PinHash, act.PinSalt))
-                {
-                    Transaction newTran = _mapper.Map<Models.Transaction>(jsonString);
-
-                    Message newMess = new Message
-                    {
-                        Modified = wcaTime,
-                        RecipientNumber = newMessage.RecipientNumber,
-                        Type = newMessage.Type,
-                        Number = _genericService.GetUserID(),
-                        DeliveryStatus = DeliveryStatus.Sent
-                    };
-
-                    Transaction nT = new Transaction
-                    {
-                        Amount = Convert.ToDecimal(newMessage.Payload)
-                    };
-
-                    nT.Message = newMess;
-
-                    _context.Transactions.Add(nT);
-                    await _context.SaveChangesAsync();
-
-                    // Perform transaction
-                    await _transact.transferMoneyAsync(newMess.RecipientNumber, nT.Amount);
-
-                    Message? saveMessage = await _context.Messages
-                                                .Include(c => c.Transactions)
-                                                .FirstOrDefaultAsync(c => c.Id == nT.MessageId);
-
-                    Transaction? savedTran = await _context.Transactions
-                                                    .FirstOrDefaultAsync(c => c.MessageId == nT.MessageId);
-
-                    GetMessageDto responseData = _mapper.Map<GetMessageDto>(saveMessage);
-                    responseData.Payload = Convert.ToString(savedTran.Amount);
-                    responseData.Interaction = "Sent";
-
-                    serviceResponse.Data = _mapper.Map<GetMessageDto>(responseData);
-                    return serviceResponse;
-                }
+                serviceResponse = await _transact.SendMoney(newMessage);
             }
             else if (newMessage.Type == MessageType.File)
             {
+                //throw new NotImplementedException();
                 serviceResponse.Success = false;
                 serviceResponse.Message = "Unimplemented";
             }
@@ -142,6 +60,103 @@ namespace Talkie.Services.MessageService
                 serviceResponse.Message = "Unable to determine message type";
             }
             return serviceResponse;
+
+            //if (newMessage.Type == MessageType.Text)
+            //{
+            //    Text newText = _mapper.Map<Text>(jsonString);
+
+            //    Message newMess = new Message
+            //    {
+            //        Modified = wcaTime,
+            //        RecipientNumber = newMessage.RecipientNumber,
+            //        Type = newMessage.Type,
+            //        Number = _genericService.GetUserID(),
+            //        DeliveryStatus = DeliveryStatus.Sent
+            //    };
+
+            //    Text nT = new Text
+            //    {
+            //        Content = newMessage.Payload
+            //    };
+
+            //    nT.Message = newMess;
+
+            //    _context.Texts.Add(nT);
+            //    System.Diagnostics.Debug.WriteLine(newMess);
+
+            //    await _context.SaveChangesAsync();
+
+            //    Message? saveMessage = await _context.Messages
+            //                                .Include(c => c.Texts)
+            //                                .FirstOrDefaultAsync(c => c.Id == nT.MessageId);
+
+            //    Text? savedText = await _context.Texts
+            //                                    .FirstOrDefaultAsync(c => c.MessageId == nT.MessageId);
+
+            //    GetMessageDto responseData = _mapper.Map<GetMessageDto>(saveMessage);
+
+            //    responseData.Payload = savedText.Content;
+            //    responseData.Interaction = "Sent";
+
+            //    serviceResponse.Data = _mapper.Map<GetMessageDto>(responseData);
+            //    return serviceResponse;
+            //}
+            //else if (newMessage.Type == MessageType.Transaction)
+            //{
+            //    Account? act = await _context.Accounts.Where(c => c.Number == _genericService.GetUserID()).FirstOrDefaultAsync();
+
+            //    if (_authRepository.VerifyPinHash(newMessage.AuthPin, act.PinHash, act.PinSalt))
+            //    {
+            //        Transaction newTran = _mapper.Map<Models.Transaction>(jsonString);
+
+            //        Message newMess = new Message
+            //        {
+            //            Modified = wcaTime,
+            //            RecipientNumber = newMessage.RecipientNumber,
+            //            Type = newMessage.Type,
+            //            Number = _genericService.GetUserID(),
+            //            DeliveryStatus = DeliveryStatus.Sent
+            //        };
+
+            //        Transaction nT = new Transaction
+            //        {
+            //            Amount = Convert.ToDecimal(newMessage.Payload)
+            //        };
+
+            //        nT.Message = newMess;
+
+            //        _context.Transactions.Add(nT);
+            //        await _context.SaveChangesAsync();
+
+            //        // Perform transaction
+            //        await _transact.transferMoneyAsync(newMess.RecipientNumber, nT.Amount);
+
+            //        Message? saveMessage = await _context.Messages
+            //                                    .Include(c => c.Transactions)
+            //                                    .FirstOrDefaultAsync(c => c.Id == nT.MessageId);
+
+            //        Transaction? savedTran = await _context.Transactions
+            //                                        .FirstOrDefaultAsync(c => c.MessageId == nT.MessageId);
+
+            //        GetMessageDto responseData = _mapper.Map<GetMessageDto>(saveMessage);
+            //        responseData.Payload = Convert.ToString(savedTran.Amount);
+            //        responseData.Interaction = "Sent";
+
+            //        serviceResponse.Data = _mapper.Map<GetMessageDto>(responseData);
+            //        return serviceResponse;
+            //    }
+            //}
+            //else if (newMessage.Type == MessageType.File)
+            //{
+            //    serviceResponse.Success = false;
+            //    serviceResponse.Message = "Unimplemented";
+            //}
+            //else
+            //{
+            //    serviceResponse.Success = false;
+            //    serviceResponse.Message = "Unable to determine message type";
+            //}
+            //return serviceResponse;
         }
 
         public async Task<ServiceResponse<List<GetMessageDto>>> GetConversation(string contact)

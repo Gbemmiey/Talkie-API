@@ -5,5 +5,7 @@
         Task<decimal> GetUserBalance();
 
         string GetUserID();
+
+        DateTime getLocalTime();
     }
 }
