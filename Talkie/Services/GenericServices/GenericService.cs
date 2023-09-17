@@ -24,10 +24,8 @@ namespace Talkie.Services.GenericServices
             return balance;
         }
 
-        public string GetUserID()
-        {
-            return _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-        }
+        public string GetUserID() => _httpContextAccessor.HttpContext
+         .User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         public DateTime getLocalTime()
         {

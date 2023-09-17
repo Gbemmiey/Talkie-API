@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 using Talkie.Controllers;
 using Talkie.Data;
 using Talkie.DTOs.Message;
@@ -14,14 +15,12 @@ namespace Talkie.Services.TextService
     {
         private readonly IMapper _mapper;
         private readonly DataContext _context;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IGenericService _genericService;
 
-        public TextService(IMapper mapper, DataContext context, IHttpContextAccessor httpContextAccessor, IGenericService genericService)
+        public TextService(IMapper mapper, DataContext context, IGenericService genericService)
         {
             _mapper = mapper;
             _context = context;
-            _httpContextAccessor = httpContextAccessor;
             _genericService = genericService;
         }
 
@@ -33,7 +32,7 @@ namespace Talkie.Services.TextService
 
             Text newText = _mapper.Map<Text>(jsonString);
 
-            Message newMess = new Message
+            Message newMess = new()
             {
                 Modified = wcaTime,
                 RecipientNumber = message.RecipientNumber,
@@ -50,6 +49,9 @@ namespace Talkie.Services.TextService
             nT.Message = newMess;
 
             _context.Texts.Add(nT);
+
+            System.Diagnostics.Debug.WriteLine(newMess.Number);
+            Console.WriteLine(newMess.Number);
 
             await _context.SaveChangesAsync();
 

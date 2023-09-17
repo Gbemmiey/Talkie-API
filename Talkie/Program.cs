@@ -28,16 +28,16 @@ builder.Services.AddControllers();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
-builder.Services.AddScoped<IGenericService, GenericService>();
+builder.Services.AddTransient<IGenericService, GenericService>();
 
-builder.Services.AddScoped<IAccountService, AccountService>();
-builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddTransient<IAccountService, AccountService>();
+builder.Services.AddTransient<IAuthRepository, AuthRepository>();
 
-builder.Services.AddScoped<IMessageService, MessageService>();
-builder.Services.AddScoped<IContactService, ContactService>();
+builder.Services.AddTransient<IMessageService, MessageService>();
+builder.Services.AddTransient<IContactService, ContactService>();
 
-builder.Services.AddScoped<ITransactionService, TransactionService>();
-builder.Services.AddScoped<ITextService, TextService>();
+builder.Services.AddTransient<ITransactionService, TransactionService>();
+builder.Services.AddTransient<ITextService, TextService>();
 
 builder.Services.AddEndpointsApiExplorer();
 
